@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <!-- Microsite homepage – updates regularly via RSS -->
+  <url>
+    <loc>https://runlocalmarketing.github.io/RunLocalMarketing/</loc>
+    <lastmod>2025-12-02</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  
+  <!-- Main agency website -->
+  <url>
+    <loc>https://runlocalmarketing.com/</loc>
+    <lastmod>2025-12-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+</urlset>

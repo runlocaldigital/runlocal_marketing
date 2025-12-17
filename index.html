@@ -191,6 +191,7 @@
       <div class="platform-links">
         <a href="https://pressadvantage.com/organization/runlocal-marketing1" target="_blank">Press Advantage</a>
       </div>
+      <div id="press-rss-feed">Loading press releases…</div>
     </section>
 
     <section>
@@ -203,7 +204,7 @@
     © <script>document.write(new Date().getFullYear());</script> RunLocal Marketing – All rights reserved.
   </footer>
 
-  <!-- Live RSS Feed Script -->
+  <!-- Live RSS Feed Script for Blog -->
   <script>
     const RSS_URL = 'https://runlocalmarketing.com/feed/';
     const PROXY_URL = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(RSS_URL)}`;
@@ -222,6 +223,38 @@
     function renderFeed(items) {
       const div = document.getElementById('rss-feed');
       let html = `<h3>Latest Local Marketing Tips</h3>`;
+      items.forEach(item => {
+        const date = new Date(item.pubDate).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+        const desc = (item.description || '').replace(/<[^>]*>/g, '').substring(0,160) + '…';
+        html += `<div style="margin:1.2rem 0;padding-bottom:1rem;border-bottom:1px solid #eee;">
+          <a href="${item.link}" target="_blank">${item.title}</a>
+          <div style="font-size:0.85rem;color:#666;margin:0.25rem 0;">${date}</div>
+          <div style="font-size:0.95rem;color:#444;">${desc}</div>
+        </div>`;
+      });
+      div.innerHTML = html;
+    }
+  </script>
+
+  <!-- Live RSS Feed Script for Press Releases -->
+  <script>
+    const PRESS_RSS_URL = 'https://app.pressadvantage.com/feeds/channel/runlocal-marketing1?organization=runlocal-marketing1';
+    const PRESS_PROXY_URL = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(PRESS_RSS_URL)}`;
+
+    fetch(PRESS_PROXY_URL)
+      .then(r => r.json())
+      .then(data => {
+        if (data.status !== 'ok' || !data.items) throw new Error();
+        const items = data.items.slice(0, 5);
+        renderPressFeed(items);
+      })
+      .catch(() => {
+        document.getElementById('press-rss-feed').innerHTML = '<p><em>No recent press releases – visit <a href="https://pressadvantage.com/organization/runlocal-marketing1">Press Advantage</a> for more.</em></p>';
+      });
+
+    function renderPressFeed(items) {
+      const div = document.getElementById('press-rss-feed');
+      let html = `<h3>Latest Press Releases</h3>`;
       items.forEach(item => {
         const date = new Date(item.pubDate).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
         const desc = (item.description || '').replace(/<[^>]*>/g, '').substring(0,160) + '…';

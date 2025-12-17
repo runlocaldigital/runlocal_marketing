@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Fully public microsite – everything should be indexed
+Sitemap: https://runlocalmarketing.github.io/RunLocalMarketing/sitemap.xml

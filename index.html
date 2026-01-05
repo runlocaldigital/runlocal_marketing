@@ -72,6 +72,9 @@
     #rss-feed h3 {color:#0A2A47;}
     .rss-item a {color:#F68C1F;font-weight:600;}
     .rss-item a:hover {color:#5CC3E8;text-decoration:underline;}
+    #press-feed h3 {color:#0A2A47;}
+    .press-item a {color:#F68C1F;font-weight:600;}
+    .press-item a:hover {color:#5CC3E8;text-decoration:underline;}
   </style>
 
   <!-- Schema.org – LocalBusiness + sameAs social links -->
@@ -105,7 +108,8 @@
         "sameAs": [
           "https://www.facebook.com/runlocalmarketing",
           "https://www.linkedin.com/company/runlocal-marketing/",
-          "https://www.youtube.com/@runlocalmarketing"
+          "https://www.youtube.com/@runlocalmarketing",
+          "https://pressadvantage.com/i_organization/runlocal-marketing1"
         ]
       },
       {
@@ -186,16 +190,19 @@
       </div>
     </section>
 
-     <section>
+    <section>
       <h3>RunLocal Marketing in the News</h3>
       <div class="platform-links">
         <a href="https://pressadvantage.com/organization/runlocal-marketing1" target="_blank">Press Advantage</a>
       </div>
-      <div id="press-rss-feed">Loading press releases…</div>
     </section>
 
-    <section>
-      <div id="rss-feed">Loading latest marketing tips…</div>
+    <section id="rss-feed">
+      <div>Loading latest marketing tips…</div>
+    </section>
+
+    <section id="press-feed">
+      <div>Loading press releases…</div>
     </section>
 
   </div>
@@ -217,11 +224,10 @@
         renderFeed(items);
       })
       .catch(() => {
-        document.getElementById('rss-feed').innerHTML = '<p><em>No recent posts – visit <a href="https://runlocalmarketing.com/">RunLocalMarketing.com</a> for the latest.</em></p>';
+        document.querySelector('#rss-feed > div').innerHTML = '<p><em>No recent posts – visit <a href="https://runlocalmarketing.com/">RunLocalMarketing.com</a> for the latest.</em></p>';
       });
 
     function renderFeed(items) {
-      const div = document.getElementById('rss-feed');
       let html = `<h3>Latest Local Marketing Tips</h3>`;
       items.forEach(item => {
         const date = new Date(item.pubDate).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
@@ -232,28 +238,33 @@
           <div style="font-size:0.95rem;color:#444;">${desc}</div>
         </div>`;
       });
-      div.innerHTML = html;
+      document.getElementById('rss-feed').innerHTML = html;
     }
   </script>
 
-  <!-- Live RSS Feed Script for Press Releases -->
+  <!-- Press Releases Section Script -->
   <script>
     const PRESS_RSS_URL = 'https://app.pressadvantage.com/feeds/channel/runlocal-marketing1?organization=runlocal-marketing1';
     const PRESS_PROXY_URL = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(PRESS_RSS_URL)}`;
 
     fetch(PRESS_PROXY_URL)
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok) throw new Error();
+        return r.json();
+      })
       .then(data => {
-        if (data.status !== 'ok' || !data.items) throw new Error();
+        if (data.status !== 'ok' || !data.items || data.items.length === 0) throw new Error();
         const items = data.items.slice(0, 5);
         renderPressFeed(items);
       })
       .catch(() => {
-        document.getElementById('press-rss-feed').innerHTML = '<p><em>No recent press releases – visit <a href="https://pressadvantage.com/organization/runlocal-marketing1">Press Advantage</a> for more.</em></p>';
+        document.getElementById('press-feed').innerHTML = `
+          <h3>Latest Press Releases</h3>
+          <p style="font-style:italic;color:#666;">Press Releases coming soon!</p>
+        `;
       });
 
     function renderPressFeed(items) {
-      const div = document.getElementById('press-rss-feed');
       let html = `<h3>Latest Press Releases</h3>`;
       items.forEach(item => {
         const date = new Date(item.pubDate).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
@@ -264,7 +275,7 @@
           <div style="font-size:0.95rem;color:#444;">${desc}</div>
         </div>`;
       });
-      div.innerHTML = html;
+      document.getElementById('press-feed').innerHTML = html;
     }
   </script>
 </body>
